@@ -104,25 +104,32 @@
     if(!introTerminada && !video.ended){ video.play().catch(()=>{}); }
   });
 
-  // 1) Intento reproducir directo CON sonido
-  video.muted = false;
-  video.play().catch(()=>{
-    // 2) Bloqueado por el navegador: arranca en silencio...
-    video.muted = true;
-    video.play().catch(()=>{});
-    // ...y activa el audio en el primer toque/click/scroll en cualquier parte
-    const activarAudio = ()=>{
-      video.muted = false;
-      video.play();
-      window.removeEventListener('pointerdown', activarAudio);
-      window.removeEventListener('touchstart', activarAudio);
-      window.removeEventListener('keydown', activarAudio);
-      window.removeEventListener('scroll', activarAudio);
-    };
-    window.addEventListener('pointerdown', activarAudio, {once:true});
-    window.addEventListener('touchstart', activarAudio, {once:true});
-    window.addEventListener('keydown', activarAudio, {once:true});
-    window.addEventListener('scroll', activarAudio, {once:true});
+  // Intenta reproducir el video CON sonido; en cuanto se pueda, suena.
+  function reproducirConSonido(){
+    video.muted = false;
+    const p = video.play();
+    if(p && p.catch){
+      p.catch(()=>{            // bloqueado: al menos que corra en silencio
+        video.muted = true;
+        video.play().catch(()=>{});
+      });
+    }
+  }
+
+  // Intento inicial (funciona en escritorio; en móvil casi siempre se bloquea)
+  reproducirConSonido();
+
+  // El audio SIEMPRE se activa con el primer toque/click/tecla en el celular.
+  // Estos listeners quedan activos permanentemente por si el móvil vuelve a silenciar.
+  ['pointerdown','touchstart','touchend','click','keydown'].forEach(ev=>{
+    window.addEventListener(ev, reproducirConSonido, {passive:true});
+  });
+
+  // Al girar o cambiar el tamaño de pantalla, reanuda el audio/video
+  window.addEventListener('resize', reproducirConSonido);
+  window.addEventListener('orientationchange', reproducirConSonido);
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden) reproducirConSonido();
   });
 
   skipBtn.addEventListener('click', revealInvite);
