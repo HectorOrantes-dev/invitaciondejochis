@@ -1,0 +1,158 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Despedida de nuestro Jochis 🎉</title>
+<link rel="stylesheet" href="invitacion.css">
+
+<!-- ===================== INTRO: VIDEO GOGO ===================== -->
+<section id="intro">
+  <video id="gogoVideo" playsinline muted autoplay preload="auto">
+    <source src="video/ssstik.io_@yuridomingues69_1786330009914.mp4" type="video/mp4">
+  </video>
+
+  <div id="neonWrap">
+    <h1 class="neon">ASISTE A LA<br>DESPEDIDA DE<br>NUESTRO <span class="neon-pink">JOCHIS</span></h1>
+  </div>
+
+  <button id="skipBtn">Saltar intro ⏭</button>
+</section>
+
+<!-- ===================== INVITACIÓN PRINCIPAL ===================== -->
+<main id="invite">
+
+  <header class="hero">
+    <p class="pretitle">🍾 Despedida 🍾</p>
+    <h2 class="titulo">Nuestro Jochis se despide</h2>
+    <p class="subtitulo">¡Y no puede faltar la banda!</p>
+  </header>
+
+  <!-- GALERÍA / RECUERDO DE SUS AMIGOS -->
+  <section class="galeria">
+    <h3 class="seccion-titulo">✨ Un recuerdo de sus amigos ✨</h3>
+    <div class="polaroids">
+      <figure class="pol"><img src="image/FESTEJADO.png" alt="Festejado"><figcaption>El Jochis 👑</figcaption></figure>
+      <figure class="pol"><img src="image/Adrian y Balencia.png" alt="Adrián y Balencia"><figcaption>Adrián &amp; Balencia</figcaption></figure>
+      <figure class="pol"><img src="image/max.png" alt="Max"><figcaption>Max</figcaption></figure>
+      <figure class="pol"><img src="image/Edwin.png" alt="Edwin"><figcaption>Edwin</figcaption></figure>
+      <figure class="pol"><img src="image/Ameth.jpeg" alt="Ameth"><figcaption>Ameth</figcaption></figure>
+      <figure class="pol"><img src="image/pablo.jpeg" alt="Pablo"><figcaption>Pablo</figcaption></figure>
+      <figure class="pol"><img src="image/Fabricio.jpeg" alt="Fabricio"><figcaption>Fabricio</figcaption></figure>
+      <figure class="pol"><img src="image/marcoño.jpeg" alt="Marco"><figcaption>Marco</figcaption></figure>
+      <figure class="pol"><img src="image/sol.jpeg" alt="Sol"><figcaption>Sol</figcaption></figure>
+      <figure class="pol"><img src="image/Berenice.jpeg" alt="Berenice"><figcaption>Berenice</figcaption></figure>
+      <figure class="pol"><img src="image/Hanna.jpeg" alt="Hanna"><figcaption>Hanna</figcaption></figure>
+      <figure class="pol"><img src="image/Melisa.jpeg" alt="Melisa"><figcaption>Melisa</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- FECHA Y LUGAR -->
+  <section class="detalles">
+    <div class="card">
+      <div class="ic">📅</div>
+      <h4>Fecha y hora</h4>
+      <p>Sábado 22 de agosto de 2026</p>
+      <p class="grande">3:00 PM</p>
+    </div>
+    <div class="card">
+      <div class="ic">📍</div>
+      <h4>Lugar</h4>
+      <p class="grande">Marinni Ristorante</p>
+      <p>San Cristóbal de las Casas</p>
+      <p class="dir">Av. Diego Dugelay 13, Casa Dugelay,<br>29230 San Cristóbal de las Casas, Chis.</p>
+      <a class="mapa-btn" target="_blank"
+         href="https://www.google.com/maps/search/?api=1&query=Marinni+Ristorante+Av+Diego+Dugelay+13+San+Cristobal+de+las+Casas">
+         🗺️ Ver ubicación en el mapa
+      </a>
+    </div>
+  </section>
+
+  <!-- CONFIRMAR ASISTENCIA -->
+  <section class="confirmar">
+    <p class="confirm-text">¿Le entras a la despedida?</p>
+    <button id="confirmarBtn">🎈 CONFIRMAR ASISTENCIA 🎈</button>
+    <p id="confirmMsg">¡Nos vemos ahí! 🍻🎉</p>
+  </section>
+
+  <footer class="pie">Con cariño, la banda de siempre 🤍</footer>
+</main>
+
+<!-- capa de globos -->
+<div id="balloons"></div>
+
+<script>
+  const intro   = document.getElementById('intro');
+  const video   = document.getElementById('gogoVideo');
+  const skipBtn = document.getElementById('skipBtn');
+  const invite  = document.getElementById('invite');
+
+  let introTerminada = false;
+
+  // Bloquea el scroll mientras se ve la intro (evita que el video se pause)
+  document.body.style.overflow = 'hidden';
+
+  function revealInvite(){
+    if(introTerminada) return;
+    introTerminada = true;
+    document.body.style.overflow = '';        // libera el scroll
+    intro.classList.add('hide');
+    setTimeout(()=>{ intro.style.display='none'; }, 900);
+    invite.classList.add('show');
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  // Si el navegador pausa el video antes de terminar, lo reanuda solo
+  video.addEventListener('pause', ()=>{
+    if(!introTerminada && !video.ended){ video.play().catch(()=>{}); }
+  });
+
+  // 1) Intento reproducir directo CON sonido
+  video.muted = false;
+  video.play().catch(()=>{
+    // 2) Bloqueado por el navegador: arranca en silencio...
+    video.muted = true;
+    video.play().catch(()=>{});
+    // ...y activa el audio en el primer toque/click/scroll en cualquier parte
+    const activarAudio = ()=>{
+      video.muted = false;
+      video.play();
+      window.removeEventListener('pointerdown', activarAudio);
+      window.removeEventListener('touchstart', activarAudio);
+      window.removeEventListener('keydown', activarAudio);
+      window.removeEventListener('scroll', activarAudio);
+    };
+    window.addEventListener('pointerdown', activarAudio, {once:true});
+    window.addEventListener('touchstart', activarAudio, {once:true});
+    window.addEventListener('keydown', activarAudio, {once:true});
+    window.addEventListener('scroll', activarAudio, {once:true});
+  });
+
+  skipBtn.addEventListener('click', revealInvite);
+  video.addEventListener('ended', revealInvite);
+
+  /* ---------- GLOBOS ---------- */
+  const colores = ['#ff4da6','#ffd84d','#4dd2ff','#7cff6b','#c17cff','#ff7c7c'];
+  function lanzarGlobos(n=40){
+    const cont = document.getElementById('balloons');
+    for(let i=0;i<n;i++){
+      const g = document.createElement('div');
+      g.className='globo';
+      const c = colores[Math.floor(Math.random()*colores.length)];
+      g.style.background = c;
+      g.style.left = Math.random()*100 + 'vw';
+      g.style.setProperty('--c', c);
+      const dur = 4 + Math.random()*3;
+      g.style.animationDuration = dur+'s';
+      g.style.animationDelay = Math.random()*0.6+'s';
+      g.style.transform = `scale(${0.7+Math.random()*0.8})`;
+      cont.appendChild(g);
+      setTimeout(()=> g.remove(), (dur+1)*1000);
+    }
+  }
+
+  const confirmarBtn = document.getElementById('confirmarBtn');
+  const confirmMsg   = document.getElementById('confirmMsg');
+  confirmarBtn.addEventListener('click', ()=>{
+    lanzarGlobos(50);
+    confirmMsg.classList.add('show');
+    confirmarBtn.classList.add('done');
+  });
+</script>
